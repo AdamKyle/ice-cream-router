@@ -1,0 +1,35 @@
+{
+    "name": "ice-cream/router",
+    "type": "library",
+    "description": "Ice Cream Router is meant to be the easiest router in the world. No Fuss, No Muss",
+    "keywords": ["library", "routing", "router", "request management", "http", "https"],
+    "homepage": "http://adambalan.com/",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Adam Balan",
+            "email": "adamkylebalan@gmail.com",
+            "homepage": "https://github.com/ice-cream-router"
+        }
+    ],
+    "require": {
+        "php": ">=7.0.0",
+        "ice-cream/di": "1.*",
+        "symfony/routing": "3.*",
+        "symfony/http-foundation": "3.*"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "5.5.*",
+        "phpunit/php-code-coverage": "4.*"
+    },
+    "autoload": {
+        "psr-4": {
+            "IceCreamRouter\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "IceCreamRouter\\Tests\\": "tests/"
+        }
+    }
+}
