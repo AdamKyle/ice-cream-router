@@ -1,5 +1,10 @@
 # Ice Cream Router
 
+[![Build Status](https://travis-ci.org/AdamKyle/ice-cream-router.svg?branch=1.0.0)](https://travis-ci.org/AdamKyle/ice-cream-router)
+[![Packagist](https://img.shields.io/packagist/v/ice-cream/di.svg?style=flat)](https://packagist.org/packages/ice-cream/router)
+[![Maintenance](https://img.shields.io/maintenance/yes/2016.svg)]()
+[![Made With Love](https://img.shields.io/badge/Made%20With-Love-green.svg)]()
+
 This is a very thin and very basic wrapper around the concept of [symfony routing](http://symfony.com/doc/current/routing.html).
 
 It's main goal is to be as simple and easy to use as possible with no bloat or
