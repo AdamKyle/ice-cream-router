@@ -1,4 +1,4 @@
-# IceCream Router
+# Ice Cream Router
 
 This is a very thin and very basic wrapper around the concept of [symfony routing](http://symfony.com/doc/current/routing.html).
 
