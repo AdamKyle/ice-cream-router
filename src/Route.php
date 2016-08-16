@@ -2,7 +2,7 @@
 
 namespace IceCreamRouter;
 
-use Symfony\Component\Routing\Route;
+use Symfony\Component\Routing\Route as SymfonyRoute;
 
 class Route {
 
@@ -31,7 +31,7 @@ class Route {
      * @return Symfony\Component\Routing\Route
      */
     public function getRoute() {
-        return new Route(
+        return new SymfonyRoute(
             $this->_name,
             ['callback' => $this->_callable],
             [], [], '', [],
