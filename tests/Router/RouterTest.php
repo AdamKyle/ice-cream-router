@@ -11,11 +11,11 @@ class RouterTest extends \PHPUnit_Framework_TestCase {
         $router = new Router();
 
         $router->get('/foo', 'foo', function($request, $response){
-            return 'hello world';
+            return $response->setContent('hello world');
         });
 
         $response = $router->processRoutes(Request::create('/foo', 'GET'));
-        $this->assertEquals('hello world', $response);
+        $this->assertEquals('hello world', $response->getContent());
     }
 
     public function testSimpleGETRouteStatus200() {
