@@ -5,10 +5,19 @@
 [![Maintenance](https://img.shields.io/maintenance/yes/2017.svg)]()
 [![Made With Love](https://img.shields.io/badge/Made%20With-Love-green.svg)]()
 
+- Requires PHP 7.2
+- Is Standalone
+
 This is a very thin and very basic wrapper around the concept of [symfony routing](http://symfony.com/doc/current/routing.html).
 
 It's main goal is to be as simple and easy to use as possible with no bloat or
 fluff.
+
+## Documentation
+
+Why is there no generated documentation, like the other Ice Cream packages?
+
+Because PHP Documentor has a symfony config that conflicts with the symfony router.
 
 ## How Do I Use It?
 

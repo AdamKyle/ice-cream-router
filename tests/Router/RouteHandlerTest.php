@@ -5,8 +5,9 @@ use IceCreamRouter\Router;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Matcher\UrlMatcher;
+use PHPUnit\Framework\TestCase;
 
-class RouteHandlerTest extends \PHPUnit_Framework_TestCase {
+class RouteHandlerTest extends TestCase {
     private $_router;
 
     public function setup() {

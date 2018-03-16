@@ -1,8 +1,9 @@
 <?php
 
 use IceCreamRouter\Route;
+use PHPUnit\Framework\TestCase;
 
-class RouteTest extends \PHPUnit_Framework_TestCase {
+class RouteTest extends TestCase {
 
     public function testCreateRoute() {
         $route = new Route('/foo', 'post', function($request){ return $request; });
