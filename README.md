@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/AdamKyle/ice-cream-router.svg?branch=master)](https://travis-ci.org/AdamKyle/ice-cream-router)
 [![Packagist](https://img.shields.io/packagist/v/ice-cream/router.svg?style=flat)](https://packagist.org/packages/ice-cream/router)
-[![Maintenance](https://img.shields.io/maintenance/yes/2017.svg)]()
+[![Maintenance](https://img.shields.io/maintenance/yes/2018.svg)]()
 [![Made With Love](https://img.shields.io/badge/Made%20With-Love-green.svg)]()
 
 - Requires PHP 7.2
