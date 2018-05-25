@@ -7,7 +7,6 @@ use PHPUnit\Framework\TestCase;
 
 class RouterTest extends TestCase {
 
-
     public function testSimpleGETRoute() {
         $router = new Router();
 

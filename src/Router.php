@@ -14,18 +14,18 @@ use Symfony\Component\Routing\Generator\UrlGenerator;
 
 class Router {
 
-    private $_collection;
+    private $collection;
 
-    private $_context;
+    private $context;
 
-    private $_defaultRoutes = [];
+    private $defaultRoutes = [];
 
     public function __construct() {
-        $this->_collection = new RouteCollection();
-        $this->_context    = new RequestContext();
+        $this->collection = new RouteCollection();
+        $this->context    = new RequestContext();
 
 
-        $this->_defaultRoutes = [
+        $this->defaultRoutes = [
             '404' => [
                 'route' => '/404',
                 'callable' => function($request) {
@@ -42,7 +42,7 @@ class Router {
             ],
         ];
 
-        $this->_createDefaultRoutes();
+        $this->createDefaultRoutes();
     }
 
     /**
@@ -55,9 +55,9 @@ class Router {
      * @param callable $callable - closure function thats executed when route is found.
      */
     public function get(string $routeName, string $name, callable $callable) {
-        $route              = new Route($routeName, 'GET', $callable);
+        $route = new Route($routeName, 'GET', $callable);
 
-        $this->_collection->add($name, $route->getRoute());
+        $this->collection->add($name, $route->getRoute());
     }
 
     /**
@@ -70,9 +70,9 @@ class Router {
      * @param callable $callable - closure function thats executed when route is found.
      */
     public function post(string $routeName, string $name, callable $callable) {
-        $route              = new Route($routeName, 'POST', $callable);
+        $route = new Route($routeName, 'POST', $callable);
 
-        $this->_collection->add($name, $route->getRoute());
+        $this->collection->add($name, $route->getRoute());
     }
 
     /**
@@ -85,9 +85,9 @@ class Router {
      * @param callable $callable - closure function thats executed when route is found.
      */
     public function put(string $routeName, string $name, callable $callable) {
-        $route              = new Route($routeName, 'PUT', $callable);
+        $route = new Route($routeName, 'PUT', $callable);
 
-        $this->_collection->add($name, $route->getRoute());
+        $this->collection->add($name, $route->getRoute());
     }
 
     /**
@@ -100,9 +100,9 @@ class Router {
      * @param callable $callable - closure function thats executed when route is found.
      */
     public function delete(string $routeName, string $name, callable $callable) {
-        $route              = new Route($routeName, 'DELETE', $callable);
+        $route = new Route($routeName, 'DELETE', $callable);
 
-        $this->_collection->add($name, $route->getRoute());
+        $this->collection->add($name, $route->getRoute());
     }
 
     /**
@@ -119,14 +119,14 @@ class Router {
      * upon instantiation of this routing class.
      */
     public function processRoutes(Request $request) {
-        $matcher = new UrlMatcher($this->_collection, $this->getContext($request));
+        $matcher = new UrlMatcher($this->collection, $this->getContext($request));
 
         try {
             return (new RouteHandler($request, $matcher))->handle();
         } catch (ResourceNotFoundException $e) {
             return new RedirectResponse('/404', 302);
         } catch (\Exception $e) {
-            $generator = new UrlGenerator($this->_collection, $this->getContext($request));
+            $generator = new UrlGenerator($this->collection, $this->getContext($request));
             $url = $generator->generate('500', ['error_details' => $e]);
             return new RedirectResponse($url, 302);
         }
@@ -147,13 +147,13 @@ class Router {
      * @param callable $callable - closure function.
      */
     public function overrideDefaulRoute(string $name, callable $callable) {
-        if (!isset($this->_defaultRoutes[$name])) {
+        if (!isset($this->defaultRoutes[$name])) {
             throw new \InvalidArgumentException($name . ' does not exist in the default routes container.');
         }
 
-        $this->_defaultRoutes[$name]['callable'] = $callable;
+        $this->defaultRoutes[$name]['callable'] = $callable;
 
-        $this->_createDefaultRoutes();
+        $this->createDefaultRoutes();
     }
 
     /**
@@ -163,18 +163,7 @@ class Router {
      * @return Symfony\Component\Routing\RequestContext          - context for the request.
      */
     public function getContext(Request $request) {
-        return $this->_context->fromRequest($request);
-    }
-
-    private function _createDefaultRoutes() {
-        foreach($this->_defaultRoutes as $name => $route) {
-            $method = $route['method'];
-
-            $route              = new Route($route['route'], $method, $route['callable']);
-            $routeForCollection = $route->getRoute();
-
-            $this->_collection->add($name, $routeForCollection);
-        }
+        return $this->context->fromRequest($request);
     }
 
     /**
@@ -183,6 +172,17 @@ class Router {
      * @return Symfony\Component\Routing\RouteCollection
      */
     public function getCollection() {
-        return $this->_collection;
+        return $this->collection;
+    }
+
+    private function createDefaultRoutes() {
+        foreach($this->defaultRoutes as $name => $route) {
+            $method = $route['method'];
+
+            $route              = new Route($route['route'], $method, $route['callable']);
+            $routeForCollection = $route->getRoute();
+
+            $this->collection->add($name, $routeForCollection);
+        }
     }
 }

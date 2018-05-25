@@ -8,31 +8,31 @@ use Symfony\Component\Routing\Matcher\UrlMatcher;
 use PHPUnit\Framework\TestCase;
 
 class RouteHandlerTest extends TestCase {
-    private $_router;
+    private $router;
 
     public function setup() {
-        $this->_router = new Router();
+        $this->router = new Router();
 
-        $this->_router->get('/route', 'route', function($request, $response){
+        $this->router->get('/route', 'route', function($request, $response){
             return new Response('route');
         });
 
-        $this->_router->get('/route/{id}', 'route_id', function($request, $response){
+        $this->router->get('/route/{id}', 'route_id', function($request, $response){
             return new Response('route');
         });
 
-        $this->_router->get('/route/sample/{id}', 'route_sample_id', function($request, $response){
+        $this->router->get('/route/sample/{id}', 'route_sample_id', function($request, $response){
             return $request->get('message');
         });
 
-        $this->_router->post('/route/sample/{id}', 'route_sample_id_post', function($request, $response){
+        $this->router->post('/route/sample/{id}', 'route_sample_id_post', function($request, $response){
             return $request->get('message');
         });
     }
 
     public function testHandlerMethod() {
         $request      = Request::create('/route', 'GET');
-        $matcher      = new UrlMatcher($this->_router->getCollection(), $this->_router->getContext($request));
+        $matcher      = new UrlMatcher($this->router->getCollection(), $this->router->getContext($request));
         $routeHandler = new RouteHandler($request, $matcher);
 
 
@@ -44,7 +44,7 @@ class RouteHandlerTest extends TestCase {
      */
     public function testHandlerMethodNotFound() {
         $request      = Request::create('/xxx', 'GET');
-        $matcher      = new UrlMatcher($this->_router->getCollection(), $this->_router->getContext($request));
+        $matcher      = new UrlMatcher($this->router->getCollection(), $this->router->getContext($request));
         $routeHandler = new RouteHandler($request, $matcher);
 
         $routeHandler->handle();
@@ -54,12 +54,12 @@ class RouteHandlerTest extends TestCase {
      * @expectedException \Exception
      */
     public function testHandlerMethodFiveHundred() {
-        $this->_router->get('/foo/{bar}', 'foo', function($bar, $request, $response){
+        $this->router->get('/foo/{bar}', 'foo', function($bar, $request, $response){
             throw new \Exception('error');
         });
 
         $request      = Request::create('/foo/bar', 'GET');
-        $matcher      = new UrlMatcher($this->_router->getCollection(), $this->_router->getContext($request));
+        $matcher      = new UrlMatcher($this->router->getCollection(), $this->router->getContext($request));
         $routeHandler = new RouteHandler($request, $matcher);
 
         $routeHandler->handle();
@@ -67,7 +67,7 @@ class RouteHandlerTest extends TestCase {
 
     public function testGetCallback() {
         $request      = Request::create('/route', 'GET');
-        $matcher      = new UrlMatcher($this->_router->getCollection(), $this->_router->getContext($request));
+        $matcher      = new UrlMatcher($this->router->getCollection(), $this->router->getContext($request));
         $routeHandler = new RouteHandler($request, $matcher);
 
         $routeHandler->getMatched();
@@ -78,7 +78,7 @@ class RouteHandlerTest extends TestCase {
 
     public function testGetMatched() {
         $request      = Request::create('/route', 'GET');
-        $matcher      = new UrlMatcher($this->_router->getCollection(), $this->_router->getContext($request));
+        $matcher      = new UrlMatcher($this->router->getCollection(), $this->router->getContext($request));
         $routeHandler = new RouteHandler($request, $matcher);
 
         $this->assertFalse(is_callable($routeHandler->getCallback()));
@@ -90,7 +90,7 @@ class RouteHandlerTest extends TestCase {
 
     public function testCleanParamBag() {
         $request      = Request::create('/route', 'GET');
-        $matcher      = new UrlMatcher($this->_router->getCollection(), $this->_router->getContext($request));
+        $matcher      = new UrlMatcher($this->router->getCollection(), $this->router->getContext($request));
         $routeHandler = new RouteHandler($request, $matcher);
 
         $routeHandler->getMatched();
@@ -105,7 +105,7 @@ class RouteHandlerTest extends TestCase {
 
     public function testParamsBagIsEmpty() {
         $request      = Request::create('/route', 'GET');
-        $matcher      = new UrlMatcher($this->_router->getCollection(), $this->_router->getContext($request));
+        $matcher      = new UrlMatcher($this->router->getCollection(), $this->router->getContext($request));
         $routeHandler = new RouteHandler($request, $matcher);
 
         $this->assertEmpty($routeHandler->getParamsForCallback());
@@ -113,7 +113,7 @@ class RouteHandlerTest extends TestCase {
 
     public function testParamsBagIsNotEmpty() {
         $request      = Request::create('/route/1', 'GET');
-        $matcher      = new UrlMatcher($this->_router->getCollection(), $this->_router->getContext($request));
+        $matcher      = new UrlMatcher($this->router->getCollection(), $this->router->getContext($request));
         $routeHandler = new RouteHandler($request, $matcher);
 
         $routeHandler->setParamsForCallBack();
@@ -123,7 +123,7 @@ class RouteHandlerTest extends TestCase {
 
     public function testParamsBagIsSizeOne() {
         $request      = Request::create('/route/1', 'GET', ['param' => 'value']);
-        $matcher      = new UrlMatcher($this->_router->getCollection(), $this->_router->getContext($request));
+        $matcher      = new UrlMatcher($this->router->getCollection(), $this->router->getContext($request));
         $routeHandler = new RouteHandler($request, $matcher);
 
         $routeHandler->setParamsForCallBack();
@@ -133,7 +133,7 @@ class RouteHandlerTest extends TestCase {
 
     public function testParamsBagIsSizeOneAndMessageExists() {
         $request      = Request::create('/route/sample/1', 'GET', ['message' => 'value']);
-        $matcher      = new UrlMatcher($this->_router->getCollection(), $this->_router->getContext($request));
+        $matcher      = new UrlMatcher($this->router->getCollection(), $this->router->getContext($request));
         $routeHandler = new RouteHandler($request, $matcher);
 
         $routeHandler->setParamsForCallBack();
@@ -145,7 +145,7 @@ class RouteHandlerTest extends TestCase {
 
     public function testIsGetIsTrue() {
         $request      = Request::create('/route/sample/1', 'GET', ['message' => 'value']);
-        $matcher      = new UrlMatcher($this->_router->getCollection(), $this->_router->getContext($request));
+        $matcher      = new UrlMatcher($this->router->getCollection(), $this->router->getContext($request));
         $routeHandler = new RouteHandler($request, $matcher);
 
         $this->assertTrue($routeHandler->isGet());
@@ -153,7 +153,7 @@ class RouteHandlerTest extends TestCase {
 
     public function testIsGetIsFalse() {
         $request      = Request::create('/route/sample/1', 'POST', ['message' => 'value']);
-        $matcher      = new UrlMatcher($this->_router->getCollection(), $this->_router->getContext($request));
+        $matcher      = new UrlMatcher($this->router->getCollection(), $this->router->getContext($request));
         $routeHandler = new RouteHandler($request, $matcher);
 
         $this->assertFalse($routeHandler->isGet());
@@ -161,7 +161,7 @@ class RouteHandlerTest extends TestCase {
 
     public function testCreatePreparedResponse() {
         $request      = Request::create('/route/sample/1', 'POST', ['message' => 'value']);
-        $matcher      = new UrlMatcher($this->_router->getCollection(), $this->_router->getContext($request));
+        $matcher      = new UrlMatcher($this->router->getCollection(), $this->router->getContext($request));
         $routeHandler = new RouteHandler($request, $matcher);
 
         $this->assertInstanceOf(Symfony\Component\HttpFoundation\Response::class, $routeHandler->createPreparedResponse());

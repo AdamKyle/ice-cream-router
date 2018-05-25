@@ -8,11 +8,11 @@ use Symfony\Component\Routing\Matcher\UrlMatcher;
 
 class RouteHandler {
 
-    private $_request;
+    private $request;
 
-    private $_matcher;
+    private $matcher;
 
-    private $_paramsForCallback = [];
+    private $paramsForCallback = [];
 
     /**
      * Constructor
@@ -21,8 +21,8 @@ class RouteHandler {
      * @param Symfony\Component\Routing\Matcher\UrlMatcher $response
      */
     public function __construct(Request $request, UrlMatcher $matcher) {
-        $this->_request = $request;
-        $this->_matcher = $matcher;
+        $this->request = $request;
+        $this->matcher = $matcher;
     }
 
     /**
@@ -43,11 +43,11 @@ class RouteHandler {
         $this->setParamsForCallBack();
 
         if ($this->isGet()) {
-            $this->_paramsForCallback[] = $this->createPreparedResponse();
+            $this->paramsForCallback[] = $this->createPreparedResponse();
 
         }
 
-        return call_user_func_array($callback, $this->_paramsForCallback);
+        return call_user_func_array($callback, $this->paramsForCallback);
     }
 
     /**
@@ -58,22 +58,22 @@ class RouteHandler {
      * @return Closure or Null
      */
     public function getCallback() {
-        return $this->_request->get('callback');
+        return $this->request->get('callback');
     }
 
     /**
      * Add the matched route information to the request attributes.
      */
     public function getMatched() {
-        $this->_request->attributes->add($this->_matcher->match($this->_request->getPathInfo()));
+        $this->request->attributes->add($this->matcher->match($this->request->getPathInfo()));
     }
 
     /**
      * Removes callback and _route from the param bag.
      */
     public function cleanParamBag() {
-        $this->_request->attributes->remove('callback');
-        $this->_request->attributes->remove('_route');
+        $this->request->attributes->remove('callback');
+        $this->request->attributes->remove('_route');
     }
 
     /**
@@ -82,11 +82,11 @@ class RouteHandler {
      * The array is used for the callback closure.
      */
     public function setParamsForCallBack() {
-        foreach ($this->_request->attributes as $attributesKey => $attributesValue) {
-            $this->_paramsForCallback[] = $attributesValue;
+        foreach ($this->request->attributes as $attributesKey => $attributesValue) {
+            $this->paramsForCallback[] = $attributesValue;
         }
 
-        $this->_paramsForCallback[] = $this->_request;
+        $this->paramsForCallback[] = $this->request;
     }
 
     /**
@@ -95,7 +95,7 @@ class RouteHandler {
      * @return array
      */
     public function getParamsForCallback(): array {
-        return $this->_paramsForCallback;
+        return $this->paramsForCallback;
     }
 
     /**
@@ -104,7 +104,7 @@ class RouteHandler {
      * @return bool
      */
     public function isGet() {
-        return $this->_request->isMethod('GET');
+        return $this->request->isMethod('GET');
     }
 
     /**
@@ -113,6 +113,6 @@ class RouteHandler {
      * @return Symfony\Component\HttpFoundation\Response
      */
     public function createPreparedResponse() {
-        return Response::create()->prepare($this->_request);
+        return Response::create()->prepare($this->request);
     }
 }

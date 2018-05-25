@@ -6,11 +6,11 @@ use Symfony\Component\Routing\Route as SymfonyRoute;
 
 class Route {
 
-    private $_method;
+    private $method;
 
-    private $_name;
+    private $name;
 
-    private $_callable;
+    private $callable;
 
     /**
      * Constructor
@@ -20,9 +20,9 @@ class Route {
      * @param closure $callable - eg: function($request, $response) {}, can ommit $response if not a GET.
      */
     public function __construct(string $name, string $method, callable $callable) {
-        $this->_name     = $name;
-        $this->_method   = strtoupper($method);
-        $this->_callable = $callable;
+        $this->name     = $name;
+        $this->method   = strtoupper($method);
+        $this->callable = $callable;
     }
 
     /**
@@ -32,10 +32,10 @@ class Route {
      */
     public function getRoute() {
         return new SymfonyRoute(
-            $this->_name,
-            ['callback' => $this->_callable],
+            $this->name,
+            ['callback' => $this->callable],
             [], [], '', [],
-            [$this->_method]
+            [$this->method]
         );
     }
 }
