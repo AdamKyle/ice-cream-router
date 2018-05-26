@@ -12,7 +12,7 @@ class RouteHandler {
 
     private $matcher;
 
-    private $paramsForCallback = [];
+    private $paramsForAction = [];
 
     /**
      * Constructor
@@ -28,7 +28,7 @@ class RouteHandler {
     /**
      * Handles the route.
      *
-     * Processes the route based on request. Returns the (executed) callback
+     * Processes the route based on request. Returns the (executed) action
      * of the registered route when found.
      *
      * @throws Symfony\Component\Routing\Exception\ResourceNotFoundException
@@ -37,28 +37,28 @@ class RouteHandler {
     public function handle() {
         $this->getMatched();
 
-        $callback = $this->getCallback();
+        $action = $this->getAction();
 
         $this->cleanParamBag();
-        $this->setParamsForCallBack();
+        $this->setParamsForAction();
 
         if ($this->isGet()) {
-            $this->paramsForCallback[] = $this->createPreparedResponse();
+            $this->paramsForAction[] = $this->createPreparedResponse();
 
         }
 
-        return call_user_func_array($callback, $this->paramsForCallback);
+        return call_user_func_array($action, $this->paramsForAction);
     }
 
     /**
-     * Get's the callable closure.
+     * Get's the action for the route.
      *
      * Can return null if you haven't called getMatched first.
      *
      * @return Closure or Null
      */
-    public function getCallback() {
-        return $this->request->get('callback');
+    public function getAction() {
+        return $this->request->get('action');
     }
 
     /**
@@ -69,24 +69,24 @@ class RouteHandler {
     }
 
     /**
-     * Removes callback and _route from the param bag.
+     * Removes action and _route from the param bag.
      */
     public function cleanParamBag() {
-        $this->request->attributes->remove('callback');
+        $this->request->attributes->remove('action');
         $this->request->attributes->remove('_route');
     }
 
     /**
      * Creates, from the request attributes, an array of params.
      *
-     * The array is used for the callback closure.
+     * The array is used for the action closure.
      */
-    public function setParamsForCallBack() {
+    public function setParamsForAction() {
         foreach ($this->request->attributes as $attributesKey => $attributesValue) {
-            $this->paramsForCallback[] = $attributesValue;
+            $this->paramsForAction[] = $attributesValue;
         }
 
-        $this->paramsForCallback[] = $this->request;
+        $this->paramsForAction[] = $this->request;
     }
 
     /**
@@ -94,8 +94,8 @@ class RouteHandler {
      *
      * @return array
      */
-    public function getParamsForCallback(): array {
-        return $this->paramsForCallback;
+    public function getParamsForAction(): array {
+        return $this->paramsForAction;
     }
 
     /**

@@ -28,14 +28,14 @@ class Router {
         $this->defaultRoutes = [
             '404' => [
                 'route' => '/404',
-                'callable' => function($request) {
+                'action' => function($request) {
                     return new Response('oops! could not find what you were looking for.');
                 },
                 'method' => 'GET'
             ],
             '500' => [
                 'route' => '/500',
-                'callable' => function($request, $response) {
+                'action' => function($request, $response) {
                     return new Response ($request->get('error_details'));
                 },
                 'method' => 'GET'
@@ -48,14 +48,14 @@ class Router {
     /**
      * GET Route.
      *
-     * Simple get route. Returns the result of the callable.
+     * Simple get route. Returns the result of the action.
      *
      * @param string $routeName  - eg: '/foo'
      * @param string $name       - eg: 'foo',
-     * @param callable $callable - closure function thats executed when route is found.
+     * @param mixed  $action     - action thats executed when route is found.
      */
-    public function get(string $routeName, string $name, callable $callable) {
-        $route = new Route($routeName, 'GET', $callable);
+    public function get(string $routeName, string $name, $action) {
+        $route = new Route($routeName, 'GET', $action);
 
         $this->collection->add($name, $route->getRoute());
     }
@@ -63,14 +63,14 @@ class Router {
     /**
      * POST Route.
      *
-     * Simple post route. Returns the result of the callable.
+     * Simple post route. Returns the result of the action.
      *
      * @param string $routeName  - eg: '/foo'
      * @param string $name       - eg: 'foo',
-     * @param callable $callable - closure function thats executed when route is found.
+     * @param mixed $action      - action thats executed when route is found.
      */
-    public function post(string $routeName, string $name, callable $callable) {
-        $route = new Route($routeName, 'POST', $callable);
+    public function post(string $routeName, string $name, $action) {
+        $route = new Route($routeName, 'POST', $action);
 
         $this->collection->add($name, $route->getRoute());
     }
@@ -78,14 +78,14 @@ class Router {
     /**
      * PUT Route.
      *
-     * Simple put route. Returns the result of the callable.
+     * Simple put route. Returns the result of the action.
      *
      * @param string $routeName  - eg: '/foo'
      * @param string $name       - eg: 'foo',
-     * @param callable $callable - closure function thats executed when route is found.
+     * @param mixed $action      - action thats executed when route is found.
      */
-    public function put(string $routeName, string $name, callable $callable) {
-        $route = new Route($routeName, 'PUT', $callable);
+    public function put(string $routeName, string $name, $action) {
+        $route = new Route($routeName, 'PUT', $action);
 
         $this->collection->add($name, $route->getRoute());
     }
@@ -93,14 +93,14 @@ class Router {
     /**
      * DELETE Route.
      *
-     * Simple delete route. Returns the result of the callable.
+     * Simple delete route. Returns the result of the action.
      *
      * @param string $routeName  - eg: '/foo'
      * @param string $name       - eg: 'foo',
-     * @param callable $callable - closure function thats executed when route is found.
+     * @param mixed $action      - action thats executed when route is found.
      */
-    public function delete(string $routeName, string $name, callable $callable) {
-        $route = new Route($routeName, 'DELETE', $callable);
+    public function delete(string $routeName, string $name, $action) {
+        $route = new Route($routeName, 'DELETE', $action);
 
         $this->collection->add($name, $route->getRoute());
     }
@@ -110,7 +110,7 @@ class Router {
      *
      * Taken almost directly from the symfony docs, we have a simple method
      * that attempts to find the route in the collection of routes, and call the
-     * closure function, passing in the request object and the response object.
+     * action, passing in the request object and the response object.
      *
      * The response object is created via creating an empty response object and preparing the
      * the request object.
@@ -138,20 +138,20 @@ class Router {
      *
      * Current default routes are:
      *
-     * - name: 404, routeName: /404, method: 'GET', callable
-     * - name: 500, routeName: /500, method: 'GET', callable
+     * - name: 404, routeName: /404, method: 'GET', action
+     * - name: 500, routeName: /500, method: 'GET', action
      *
      * @param string $name       - name of route.
      * @param string $routeName  - eg: /404
      * @param string $method     = eg: 'GET'
-     * @param callable $callable - closure function.
+     * @param mixed $action      - action thats executed when route is found.
      */
-    public function overrideDefaulRoute(string $name, callable $callable) {
+    public function overrideDefaulRoute(string $name, $action) {
         if (!isset($this->defaultRoutes[$name])) {
             throw new \InvalidArgumentException($name . ' does not exist in the default routes container.');
         }
 
-        $this->defaultRoutes[$name]['callable'] = $callable;
+        $this->defaultRoutes[$name]['action'] = $action;
 
         $this->createDefaultRoutes();
     }
@@ -179,7 +179,7 @@ class Router {
         foreach($this->defaultRoutes as $name => $route) {
             $method = $route['method'];
 
-            $route              = new Route($route['route'], $method, $route['callable']);
+            $route              = new Route($route['route'], $method, $route['action']);
             $routeForCollection = $route->getRoute();
 
             $this->collection->add($name, $routeForCollection);

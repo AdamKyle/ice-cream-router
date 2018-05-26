@@ -10,19 +10,19 @@ class Route {
 
     private $name;
 
-    private $callable;
+    private $action;
 
     /**
      * Constructor
      *
      * @param string $name      - name of route, eg: '/foo'
      * @param string $method    - eg: 'GET'
-     * @param closure $callable - eg: function($request, $response) {}, can ommit $response if not a GET.
+     * @param mixed  $action    - eg: function($request, $response) {}, can ommit $response if not a GET.
      */
-    public function __construct(string $name, string $method, callable $callable) {
+    public function __construct(string $name, string $method, $action) {
         $this->name     = $name;
         $this->method   = strtoupper($method);
-        $this->callable = $callable;
+        $this->action = $action;
     }
 
     /**
@@ -33,7 +33,7 @@ class Route {
     public function getRoute() {
         return new SymfonyRoute(
             $this->name,
-            ['callback' => $this->callable],
+            ['action' => $this->action],
             [], [], '', [],
             [$this->method]
         );

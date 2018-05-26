@@ -65,15 +65,15 @@ class RouteHandlerTest extends TestCase {
         $routeHandler->handle();
     }
 
-    public function testGetCallback() {
+    public function testGetAction() {
         $request      = Request::create('/route', 'GET');
         $matcher      = new UrlMatcher($this->router->getCollection(), $this->router->getContext($request));
         $routeHandler = new RouteHandler($request, $matcher);
 
         $routeHandler->getMatched();
 
-        $callback = $routeHandler->getCallback();
-        $this->assertTrue(is_callable($callback));
+        $action = $routeHandler->getAction();
+        $this->assertTrue(is_callable($action));
     }
 
     public function testGetMatched() {
@@ -81,11 +81,11 @@ class RouteHandlerTest extends TestCase {
         $matcher      = new UrlMatcher($this->router->getCollection(), $this->router->getContext($request));
         $routeHandler = new RouteHandler($request, $matcher);
 
-        $this->assertFalse(is_callable($routeHandler->getCallback()));
+        $this->assertFalse(is_callable($routeHandler->getAction()));
 
         $routeHandler->getMatched();
 
-        $this->assertTrue(is_callable($routeHandler->getCallback()));
+        $this->assertTrue(is_callable($routeHandler->getAction()));
     }
 
     public function testCleanParamBag() {
@@ -95,12 +95,12 @@ class RouteHandlerTest extends TestCase {
 
         $routeHandler->getMatched();
 
-        $callback = $routeHandler->getCallback();
-        $this->assertTrue(is_callable($callback));
+        $action = $routeHandler->getAction();
+        $this->assertTrue(is_callable($action));
 
         $routeHandler->cleanParamBag();
 
-        $this->assertFalse(is_callable($routeHandler->getCallback()));
+        $this->assertFalse(is_action($routeHandler->getAction()));
     }
 
     public function testParamsBagIsEmpty() {
@@ -108,7 +108,7 @@ class RouteHandlerTest extends TestCase {
         $matcher      = new UrlMatcher($this->router->getCollection(), $this->router->getContext($request));
         $routeHandler = new RouteHandler($request, $matcher);
 
-        $this->assertEmpty($routeHandler->getParamsForCallback());
+        $this->assertEmpty($routeHandler->getParamsForAction());
     }
 
     public function testParamsBagIsNotEmpty() {
@@ -116,9 +116,9 @@ class RouteHandlerTest extends TestCase {
         $matcher      = new UrlMatcher($this->router->getCollection(), $this->router->getContext($request));
         $routeHandler = new RouteHandler($request, $matcher);
 
-        $routeHandler->setParamsForCallBack();
+        $routeHandler->setParamsForAction();
 
-        $this->assertNotEmpty($routeHandler->getParamsForCallback());
+        $this->assertNotEmpty($routeHandler->getParamsForAction());
     }
 
     public function testParamsBagIsSizeOne() {
@@ -126,9 +126,9 @@ class RouteHandlerTest extends TestCase {
         $matcher      = new UrlMatcher($this->router->getCollection(), $this->router->getContext($request));
         $routeHandler = new RouteHandler($request, $matcher);
 
-        $routeHandler->setParamsForCallBack();
+        $routeHandler->setParamsForAction();
 
-        $this->assertTrue(count($routeHandler->getParamsForCallback()) === 1);
+        $this->assertTrue(count($routeHandler->getParamsForAction()) === 1);
     }
 
     public function testParamsBagIsSizeOneAndMessageExists() {
@@ -136,9 +136,9 @@ class RouteHandlerTest extends TestCase {
         $matcher      = new UrlMatcher($this->router->getCollection(), $this->router->getContext($request));
         $routeHandler = new RouteHandler($request, $matcher);
 
-        $routeHandler->setParamsForCallBack();
+        $routeHandler->setParamsForAction();
 
-        $this->assertTrue(count($routeHandler->getParamsForCallback()) === 1);
+        $this->assertTrue(count($routeHandler->getParamsForAction()) === 1);
 
         $this->assertEquals('value', $routeHandler->handle());
     }
