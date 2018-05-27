@@ -11,7 +11,7 @@ class RouteHandlerTest extends TestCase {
     private $router;
 
     public function setup() {
-        $this->router = new Router();
+        $this->router = new Router('App\\Sample\\Namespace');
 
         $this->router->get('/route', 'route', function($request, $response){
             return new Response('route');
@@ -20,6 +20,8 @@ class RouteHandlerTest extends TestCase {
         $this->router->get('/route/{id}', 'route_id', function($request, $response){
             return new Response('route');
         });
+
+        $this->router->get('/route/{id}/sample', 'route_id', 'Action:sampleAction');
 
         $this->router->get('/route/sample/{id}', 'route_sample_id', function($request, $response){
             return $request->get('message');
@@ -100,7 +102,7 @@ class RouteHandlerTest extends TestCase {
 
         $routeHandler->cleanParamBag();
 
-        $this->assertFalse(is_action($routeHandler->getAction()));
+        $this->assertFalse(is_callable($routeHandler->getAction()));
     }
 
     public function testParamsBagIsEmpty() {

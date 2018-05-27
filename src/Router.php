@@ -20,9 +20,12 @@ class Router {
 
     private $defaultRoutes = [];
 
-    public function __construct() {
+    private $namespace = null;
+
+    public function __construct(string $namespace) {
         $this->collection = new RouteCollection();
         $this->context    = new RequestContext();
+        $this->namespace  = $namespace;
 
 
         $this->defaultRoutes = [
@@ -51,13 +54,11 @@ class Router {
      * Simple get route. Returns the result of the action.
      *
      * @param string $routeName  - eg: '/foo'
-     * @param string $name       - eg: 'foo',
+     * @param string $name       - eg: 'foo'
      * @param mixed  $action     - action thats executed when route is found.
      */
     public function get(string $routeName, string $name, $action) {
-        $route = new Route($routeName, 'GET', $action);
-
-        $this->collection->add($name, $route->getRoute());
+        $this->createRoute($routeName, $name, 'GET', $action);
     }
 
     /**
@@ -66,13 +67,11 @@ class Router {
      * Simple post route. Returns the result of the action.
      *
      * @param string $routeName  - eg: '/foo'
-     * @param string $name       - eg: 'foo',
+     * @param string $name       - eg: 'foo'
      * @param mixed $action      - action thats executed when route is found.
      */
     public function post(string $routeName, string $name, $action) {
-        $route = new Route($routeName, 'POST', $action);
-
-        $this->collection->add($name, $route->getRoute());
+        $this->createRoute($routeName, $name, 'POST', $action);
     }
 
     /**
@@ -81,13 +80,11 @@ class Router {
      * Simple put route. Returns the result of the action.
      *
      * @param string $routeName  - eg: '/foo'
-     * @param string $name       - eg: 'foo',
+     * @param string $name       - eg: 'foo'
      * @param mixed $action      - action thats executed when route is found.
      */
     public function put(string $routeName, string $name, $action) {
-        $route = new Route($routeName, 'PUT', $action);
-
-        $this->collection->add($name, $route->getRoute());
+        $this->createRoute($routeName, $name, 'PUT', $action);
     }
 
     /**
@@ -96,13 +93,47 @@ class Router {
      * Simple delete route. Returns the result of the action.
      *
      * @param string $routeName  - eg: '/foo'
-     * @param string $name       - eg: 'foo',
+     * @param string $name       - eg: 'foo'
      * @param mixed $action      - action thats executed when route is found.
      */
     public function delete(string $routeName, string $name, $action) {
-        $route = new Route($routeName, 'DELETE', $action);
+        $this->createRoute($routeName, $name, 'DELETE', $action);
+    }
 
-        $this->collection->add($name, $route->getRoute());
+    /**
+     * Create the route.
+     *
+     * If the action is not an instance of Closure then attempt to set up the class and method,
+     * by exploding on the delimeter and appending the namespace.
+     *
+     * The action must conform to 'action:method' if the action is not a closure.
+     *
+     * @param string $route  - eg: '/foo'
+     * @param string $name   - eg: 'foo'
+     * @param string $method - eg: GET
+     * @param mixed $action  - action thats executed when route is found.
+     * @throws \Exception
+     */
+    public function createRoute(string $route, string $name, string $method, $action) {
+        $route = new Route($route, strtoupper($method), $action);
+
+        // Convert the action to class:method
+        if (!$action instanceof \Closure) {
+            if (is_string($action) && !strpos($action, ':')) {
+                throw new \Exception($action . ' is an unacceptable action. Action must be a string seperating class and method with :');
+            }
+
+            $routeAction = [];
+
+            $routeAction['class']  = $this->namespace . '\\' . explode(':', $action)[0];
+            $routeAction['method'] = explode(':', $action)[1];
+
+            // Overide the string action with the defined action.
+            $route->setAction($routeAction);
+        }
+
+
+        $this->collection->add($name, $route->getroute());
     }
 
     /**

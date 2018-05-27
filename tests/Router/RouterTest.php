@@ -8,7 +8,7 @@ use PHPUnit\Framework\TestCase;
 class RouterTest extends TestCase {
 
     public function testSimpleGETRoute() {
-        $router = new Router();
+        $router = new Router('App\\Sample\\Namespace');
 
         $router->get('/foo', 'foo', function($request, $response){
             return $response->setContent('hello world');
@@ -19,7 +19,7 @@ class RouterTest extends TestCase {
     }
 
     public function testSimpleGETRouteStatus200() {
-        $router = new Router();
+        $router = new Router('App\\Sample\\Namespace');
 
         $router->get('/foo', 'foo', function($request, $response){
             return $response->getStatusCode();
@@ -30,7 +30,7 @@ class RouterTest extends TestCase {
     }
 
     public function testFoundRouteWithParam() {
-        $router = new Router();
+        $router = new Router('App\\Sample\\Namespace');
 
         $router->get('/foo/{bar}', 'foo', function($bar, $request, $response){
             return 'hello ' . $request->attributes->get('bar');
@@ -41,8 +41,26 @@ class RouterTest extends TestCase {
         $this->assertEquals('hello bar', $response);
     }
 
+    public function testValidateActionWhenActionIsClassMethod() {
+        $router = new Router('App\\Sample\\Namespace');
+        $router->get('/foo/{bar}', 'foo', 'Action:sampleAction');
+
+        $action = $router->getCollection()->get('foo')->getDefaults()['action'];
+
+        $this->assertEquals($action['class'], 'App\\Sample\\Namespace\\Action');
+        $this->assertEquals($action['method'], 'sampleAction');
+    }
+
+    /**
+     * @expectedException \Exception
+     */
+    public function testFailRouteActionValidation() {
+        $router = new Router('App\\Sample\\Namespace');
+        $router->get('/foo/{bar}', 'foo', 'Action_sampleAction');
+    }
+
     public function testFourOhFourRoute() {
-        $router = new Router();
+        $router = new Router('App\\Sample\\Namespace');
 
         $response = $router->processRoutes(Request::create('/foo', 'GET'));
 
@@ -50,7 +68,7 @@ class RouterTest extends TestCase {
     }
 
     public function testFiveHundred() {
-        $router = new Router();
+        $router = new Router('App\\Sample\\Namespace');
 
         $router->get('/foo/{bar}', 'foo', function($bar, $request, $response){
             throw new \Exception('error');
@@ -62,7 +80,7 @@ class RouterTest extends TestCase {
     }
 
     public function testBasicPost() {
-        $router = new Router();
+        $router = new Router('App\\Sample\\Namespace');
 
         $router->post('/foo', 'foo', function($request){
             return $request->get('message');
@@ -74,7 +92,7 @@ class RouterTest extends TestCase {
     }
 
     public function testPostWithResponse() {
-        $router = new Router();
+        $router = new Router('App\\Sample\\Namespace');
 
         $router->post('/foo', 'foo', function($request){
             $message = $request->get('message');
@@ -88,7 +106,7 @@ class RouterTest extends TestCase {
     }
 
     public function testPostWithParamAndGetResponse() {
-        $router = new Router();
+        $router = new Router('App\\Sample\\Namespace');
 
         $router->post('/foo/{id}', 'foo', function($id, $request){
             return new Response('Request Message: ' . $request->get('message') . ' Id Passed in: ' . $id);
@@ -100,7 +118,7 @@ class RouterTest extends TestCase {
     }
 
     public function testPutWithParamAndGetResponse() {
-        $router = new Router();
+        $router = new Router('App\\Sample\\Namespace');
 
         $router->put('/foo/{id}', 'foo', function($id, $request){
             return new Response('Request Message: ' . $request->get('message') . ' Id Passed in: ' . $id);
@@ -112,7 +130,7 @@ class RouterTest extends TestCase {
     }
 
     public function testDeleteWithParamAndGetResponse() {
-        $router = new Router();
+        $router = new Router('App\\Sample\\Namespace');
 
         $router->delete('/foo/{id}', 'foo', function($id, $request){
             return new Response('id: ' . $id . ' was deleted');
@@ -124,7 +142,7 @@ class RouterTest extends TestCase {
     }
 
     public function testTwoRoutesWithDifferentMethods() {
-        $router = new Router();
+        $router = new Router('App\\Sample\\Namespace');
 
         $router->get('/foo/{id}', 'foo', function($id, $request, $response){
             return $response->setContent('ID: ' . $id);
@@ -144,7 +162,7 @@ class RouterTest extends TestCase {
     }
 
     public function testExsitingDefaultRouteFourOhFour() {
-        $router = new Router();
+        $router = new Router('App\\Sample\\Namespace');
 
         $response = $router->processRoutes(Request::create('/404', 'GET'));
         $this->assertEquals('oops! could not find what you were looking for.', $response->getContent());
@@ -152,7 +170,7 @@ class RouterTest extends TestCase {
     }
 
     public function testExsitingDefaultRouteFiveHundred() {
-        $router = new Router();
+        $router = new Router('App\\Sample\\Namespace');
 
         $response = $router->processRoutes(Request::create('/500', 'GET', ['error_details' => 'oops! Something went wrong.']));
         $this->assertEquals('oops! Something went wrong.', $response->getContent());
@@ -163,13 +181,13 @@ class RouterTest extends TestCase {
      * @expectedException \InvalidArgumentException
      */
     public function testOverRideExsitingDefaultRouteCantFindRoute() {
-        $router = new Router();
+        $router = new Router('App\\Sample\\Namespace');
 
         $router->overrideDefaulRoute('xxx', function(){ return ''; });
     }
 
     public function testOverRideExsitingDefaultRoute() {
-        $router = new Router();
+        $router = new Router('App\\Sample\\Namespace');
 
         $router->overrideDefaulRoute('404', function(){ return new Response('hello world.'); });
 
@@ -179,13 +197,13 @@ class RouterTest extends TestCase {
     }
 
     public function testGetContextFromRequest() {
-        $router = new Router();
+        $router = new Router('App\\Sample\\Namespace');
 
         $this->assertInstanceOf(Symfony\Component\Routing\RequestContext::class, $router->getContext(Request::create('/')));
     }
 
     public function testGetCollection() {
-        $router = new Router();
+        $router = new Router('App\\Sample\\Namespace');
         $this->assertInstanceOf(Symfony\Component\Routing\RouteCollection::class, $router->getCollection());
     }
 }
